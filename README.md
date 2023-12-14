@@ -1,0 +1,2 @@
+# NLCISBNPlugin
+基于中国国家图书馆ISBN检索的calibre的source/metadata插件

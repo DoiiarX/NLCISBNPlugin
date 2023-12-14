@@ -1,6 +1,6 @@
 # 中国国家图书馆ISBN Calibre Metadata 源插件
 
-该项目是一个用于 [Calibre](https://calibre-ebook.com/) 电子书管理软件的元数据源插件，旨在从中国国家图书馆获取图书信息，特别是基于ISBN。此插件允许用户轻松地将图书信息添加到其Calibre库中，包括书名、作者、出版日期等重要信息。
+该项目是一个用于 [Calibre](https://calibre-ebook.com/) 电子书管理软件的元数据源插件，旨在从[中国国家图书馆](http://opac.nlc.cn/F)获取图书信息，特别是基于ISBN。此插件允许用户轻松地将图书信息添加到其Calibre库中，包括书名、作者、出版日期等重要信息。
 
 ## 功能特点
 

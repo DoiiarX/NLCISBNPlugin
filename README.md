@@ -38,7 +38,8 @@
 5. 插件将自动从中国国家图书馆检索并填充图书信息。
 
 6. 确认信息无误后，点击 "确定" 保存更新的元数据。
-
+## 无法安装插件的解决办法
+1. [报错 It does not contain a top-level init.py file](https://github.com/DoiiarX/NLCISBNPlugin/issues/1)
 ## 贡献
 
 如果您发现任何问题或想要改进这个插件，欢迎贡献您的代码。请按照以下步骤进行：

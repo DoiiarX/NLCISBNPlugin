@@ -25,6 +25,8 @@ HEADERS = {
 def get_dynamic_url(log):
     '''
     从基础页面获取动态URL。
+    :param log: 日志记录器。
+    :return: 动态URL或None（获取失败时）。
     '''
     try:
         response = urllib.request.urlopen(urllib.request.Request(BASE_URL, headers=HEADERS), timeout=10)
@@ -40,9 +42,12 @@ def get_dynamic_url(log):
         log(f"获取动态URL时出错: {e}")
         return None
 
-def isbn2meta(isbn,log):
+def isbn2meta(isbn, log):
     '''
     将ISBN转换为元数据。
+    :param isbn: ISBN号码，作为字符串。
+    :param log: 日志记录器。
+    :return: 解析后的元数据或None（获取失败时）。
     '''
     if not isinstance(isbn, str):
         log("ISBN必须是字符串")
@@ -67,7 +72,7 @@ def isbn2meta(isbn,log):
         response = urllib.request.urlopen(urllib.request.Request(search_url, headers=HEADERS), timeout=10)
         response_text = response.read().decode('utf-8')
         soup = BeautifulSoup(response_text, "html.parser")
-        return parse_metadata(soup, isbn,log)
+        return parse_metadata(soup, isbn, log)
     except Exception as e:
         log(f"获取元数据时出错: {e}")
         return None
@@ -77,7 +82,8 @@ def parse_metadata(soup, isbn, log):
     从BeautifulSoup对象中解析元数据。
     :param soup: BeautifulSoup对象。
     :param isbn: ISBN号码，作为字符串。
-    :return: 解析后的元数据。
+    :param log: 日志记录器。
+    :return: 解析后的元数据或None（解析失败时）。
     '''
     data = {}
     prev_td1 = ''
@@ -106,7 +112,7 @@ def parse_metadata(soup, isbn, log):
             prev_td1 = td1.strip()
             prev_td2 = td2.strip()
 
-    # Use a regular expression to extract the 'pubdate' in [2019] format from '出版项'
+    # 从'出版项'中使用正则表达式提取格式为[2019]的'pubdate'
     pubdate_match = re.search(r',\s*(\d{4})', data.get("出版项", ""))
     pubdate = pubdate_match.group(1) if pubdate_match else ""
 
@@ -132,6 +138,13 @@ def parse_metadata(soup, isbn, log):
     return to_metadata(metadata, False, log)
 
 def to_metadata(book, add_translator_to_author, log):
+    '''
+    将书籍信息转换为元数据对象。
+    :param book: 书籍信息字典。
+    :param add_translator_to_author: 是否将翻译者添加到作者列表中。
+    :param log: 日志记录器。
+    :return: 元数据对象。
+    '''
     if book:
         authors = (book['authors'] + book['translators']
                    ) if add_translator_to_author and book.get('translators', None) else book['authors']
@@ -148,22 +161,20 @@ def to_metadata(book, add_translator_to_author, log):
                 elif re.compile('^\\d{4}-\\d+-\\d+$').match(pubdate):
                     mi.pubdate = datetime.strptime(pubdate, '%Y-%m-%d')
             except:
-                log.error('Failed to parse pubdate %r' % pubdate)
+                log.error('解析出版日期失败 %r' % pubdate)
         mi.comments = book['comments']
         mi.tags = book.get('tags', [])
-        # mi.rating = book['rating']
         mi.isbn = book.get('isbn', '')
-        # mi.series = book.get('series', [])
         mi.language = 'zh_CN'
         return mi
 
 class NLCISBNPlugin(Source):
-    name = 'National Library of China ISBN Plugin'
-    description = 'A Calibre plugin to fetch metadata from the National Library of China using ISBN.'
+    name = '国家图书馆ISBN插件'
+    description = '使用ISBN从中国国家图书馆获取元数据的Calibre插件。'
     supported_platforms = ['windows', 'osx', 'linux']
     version = (1, 0, 0)
     author = 'Doiiars'
-    capabilities = frozenset(['tags', 'identify','comments', 'pubdate'])
+    capabilities = frozenset(['tags', 'identify', 'comments', 'pubdate'])
 
     def get_book_url(self, identifiers):
         return None
@@ -173,8 +184,8 @@ class NLCISBNPlugin(Source):
         if not isbn:
             return
 
-        metadata = isbn2meta(isbn,log)
-        log('Downloading metadata:', metadata)
+        metadata = isbn2meta(isbn, log)
+        log('下载元数据:', metadata)
         if metadata:
             result_queue.put(metadata)
 

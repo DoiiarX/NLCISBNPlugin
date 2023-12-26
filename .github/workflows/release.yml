@@ -1,0 +1,40 @@
+name: Release Workflow
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    # 创建ZIP压缩包
+    - name: Create ZIP Archive
+      run: |
+        zip NLCISBNPlugin.zip *.py README.md LICENSE
+
+    # 创建发布
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    # 上传ZIP文件作为发布资产
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./NLCISBNPlugin.zip
+        asset_name: NLCISBNPlugin.zip
+        asset_content_type: application/zip

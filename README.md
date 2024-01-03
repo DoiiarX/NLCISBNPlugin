@@ -1,3 +1,18 @@
+<p align="center">
+	<a href="https://github.com/DoiiarX/NLCISBNPlugin/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/DoiiarX/NLCISBNPlugin.svg"></a>
+	<a href="https://github.com/DoiiarX/NLCISBNPlugin/network/members" target="_blank"><img src="https://img.shields.io/github/forks/DoiiarX/NLCISBNPlugin.svg"></a>
+	<a href="https://github.com/DoiiarX/NLCISBNPlugin/issues" target="_blank"><img src="https://img.shields.io/github/issues/DoiiarX/NLCISBNPlugin.svg"></a>
+	<a href="https://github.com/DoiiarX/NLCISBNPlugin/issues?q=is%3Aissue+is%3Aclosed" target="_blank"><img src="https://img.shields.io/github/issues-closed/DoiiarX/NLCISBNPlugin.svg"></a>
+	<a href="https://github.com/DoiiarX/NLCISBNPlugin/pulls" target="_blank"><img src="https://img.shields.io/github/issues-pr/DoiiarX/NLCISBNPlugin.svg"></a>
+	<a href="https://github.com/DoiiarX/NLCISBNPlugin/pulls?q=is%3Apr+is%3Aclosed" target="_blank"><img src="https://img.shields.io/github/issues-pr-closed/DoiiarX/NLCISBNPlugin.svg"></a>
+	<a href="https://github.com/DoiiarX/NLCISBNPlugin" target="_blank"><img src="https://img.shields.io/github/last-commit/DoiiarX/NLCISBNPlugin.svg"></a>
+</p>
+<p align="center">
+	<a href="https://github.com/DoiiarX/NLCISBNPlugin" target="_blank"><img src="https://visitor-badge.glitch.me/badge?page_id=d2-projects.d2-admin"></a>
+	<a href="https://github.com/DoiiarX/NLCISBNPlugin/releases" target="_blank"><img src="https://img.shields.io/github/release/DoiiarX/NLCISBNPlugin.svg"></a>
+	<a href="https://deepscan.io/dashboard#view=project&tid=22929&pid=26210&bid=830826"><img src="https://deepscan.io/api/teams/22929/projects/26210/branches/830826/badge/grade.svg" alt="DeepScan grade"></a>
+</p>
+
 # 中国国家图书馆ISBN Calibre Metadata 源插件
 
 该项目是一个用于 [Calibre](https://calibre-ebook.com/) 电子书管理软件的元数据源插件，旨在从[中国国家图书馆](http://opac.nlc.cn/F)获取图书信息，特别是基于ISBN。此插件允许用户轻松地将图书信息添加到其Calibre库中，包括书名、作者、出版日期等重要信息。
@@ -71,3 +86,5 @@
 ---
 
 感谢您对中国国家图书馆ISBN Calibre Metadata 源插件的兴趣和支持！如果您有任何问题或建议，欢迎在 GitHub 上的问题部分提出。
+## Star 历史
+[![Stargazers over time](https://starchart.cc/DoiiarX/NLCISBNPlugin.svg)](https://starchart.cc/DoiiarX/NLCISBNPlugin)

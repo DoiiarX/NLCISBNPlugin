@@ -1,0 +1,61 @@
+name: Release Workflow
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      timestamp: ${{ steps.get-timestamp.outputs.time }}
+    steps:
+    - name: Get build timestamp
+      id: get-timestamp
+      run: |
+        echo "time=$(TZ="Asia/Shanghai" /bin/date "+%Y-%m-%d-%H%M")" >> $GITHUB_OUTPUT
+
+    - name: Generate environmental variables
+      id: generate_env_vars
+      run: |
+        echo "tag_name=nlcisbn-${{ steps.get-timestamp.outputs.time }}" >> $GITHUB_OUTPUT
+        echo "release_name=NLCISBN Plugin Release ${{ steps.get-timestamp.outputs.time }}" >> $GITHUB_OUTPUT
+
+    - uses: actions/checkout@v2
+
+    # 创建ZIP压缩包
+    - name: Create ZIP Archive
+      run: |
+        zip NLCISBNPlugin.zip *.py README.md LICENSE
+
+    # 创建发布说明
+    - name: Generate Release Notes
+      id: generate_notes
+      run: |
+        RELEASE_NOTES=$(git log --format='%h %s' --reverse $(git describe --tags --abbrev=0 @^)..@)
+        echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
+  
+    # 创建发布
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.generate_env_vars.outputs.tag_name }}
+        release_name: ${{ steps.generate_env_vars.outputs.release_name }}
+        body: ${{ env.RELEASE_NOTES }}
+        draft: false
+        prerelease: true
+
+    # 上传ZIP文件作为发布资产
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./NLCISBNPlugin.zip
+        asset_name: NLCISBNPlugin.zip
+        asset_content_type: application/zip

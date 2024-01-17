@@ -34,7 +34,6 @@ def get_dynamic_url(log):
         dynamic_url_match = re.search(r"http://opac.nlc.cn:80/F/[^\s?]*", response_text)
         if dynamic_url_match:
             dynamic_url = dynamic_url_match.group(0)
-            log(dynamic_url)
             return dynamic_url
         else:
             raise ValueError("无法找到动态URL")
@@ -71,13 +70,40 @@ def isbn2meta(isbn, log):
     try:
         response = urllib.request.urlopen(urllib.request.Request(search_url, headers=HEADERS), timeout=10)
         response_text = response.read().decode('utf-8')
-        soup = BeautifulSoup(response_text, "html.parser")
-        return parse_metadata(soup, isbn, log)
+        return parse_metadata(response_text, isbn, log)
     except Exception as e:
         log(f"获取元数据时出错: {e}")
         return None
 
-def parse_metadata(soup, isbn, log):
+def parse_isbn(html, log):
+    '''
+    从给定的HTML内容中解析出ISBN号。
+
+    :param html: 包含ISBN信息的HTML文本。
+    :param log: 用于记录日志信息的函数或日志记录器。
+    :return: 解析出的ISBN号，如果未找到则为空字符串。
+    '''
+
+    # 定义匹配ISBN的正则表达式模式
+    isbn_pattern = r'ISBN: ([\d\-]+)'
+    
+    # 在HTML文本中搜索ISBN号的匹配项
+    isbn_matches = re.search(isbn_pattern, html)
+
+    # 如果找到匹配项，则将ISBN保存到isbn变量中，否则记录未找到的信息
+    if isbn_matches:
+        isbn = isbn_matches.group(1)
+        isbn = '978-'+isbn
+    else:
+        log(f'未找到ISBN号')
+        isbn = ''
+    
+    # 记录找到的或未找到的ISBN号，并返回结果
+    log(f'解析得到的ISBN号: {isbn}')
+    return isbn.replace('-','')
+
+
+def parse_metadata(html, isbn, log):
     '''
     从BeautifulSoup对象中解析元数据。
     :param soup: BeautifulSoup对象。
@@ -85,6 +111,9 @@ def parse_metadata(soup, isbn, log):
     :param log: 日志记录器。
     :return: 解析后的元数据或None（解析失败时）。
     '''
+    web_isbn = parse_isbn(html, log)
+    soup = BeautifulSoup(html, "html.parser")
+    
     data = {}
     prev_td1 = ''
     prev_td2 = ''
@@ -118,13 +147,13 @@ def parse_metadata(soup, isbn, log):
 
     publisher_match = re.search(r':\s*(.+),\s', data.get("出版项", ""))
     publisher = publisher_match.group(1) if publisher_match else ""
-
+    
     tags = data.get("主题", "").replace('--', '&')
     tags += f' & {data.get("中图分类号", "")}'
     tags += f' & {publisher}'
     tags += f' & {pubdate}'
-    tags = tags.split(' & ')
-
+    tags = [tag.strip() for tag in re.split(r'[&\s]+', tags) if tag.strip()]
+    
     metadata = {
         "title": data.get("题名与责任", f"{isbn}"),
         "tags": tags,
@@ -132,7 +161,7 @@ def parse_metadata(soup, isbn, log):
         'publisher': publisher,
         'pubdate': pubdate,
         'authors': data.get("著者", "").split(' & '),
-        "isbn": data.get(f"{isbn}", "")
+        "isbn": data.get(f"{web_isbn}", f"{isbn}")
     }
 
     return to_metadata(metadata, False, log)
@@ -172,7 +201,7 @@ class NLCISBNPlugin(Source):
     name = '国家图书馆ISBN插件'
     description = '使用ISBN从中国国家图书馆获取元数据的Calibre插件。'
     supported_platforms = ['windows', 'osx', 'linux']
-    version = (1, 0, 0)
+    version = (1, 1, 0)
     author = 'Doiiars'
     capabilities = frozenset(['tags', 'identify', 'comments', 'pubdate'])
 
@@ -185,7 +214,6 @@ class NLCISBNPlugin(Source):
             return
 
         metadata = isbn2meta(isbn, log)
-        log('下载元数据:', metadata)
         if metadata:
             result_queue.put(metadata)
 

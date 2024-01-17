@@ -2,6 +2,10 @@
 
 该项目是一个用于 [Calibre](https://calibre-ebook.com/) 电子书管理软件的元数据源插件，旨在从[中国国家图书馆](http://opac.nlc.cn/F)获取图书信息，特别是基于ISBN。此插件允许用户轻松地将图书信息添加到其Calibre库中，包括书名、作者、出版日期、中图分类号等重要信息。
 
+**(交流反馈QQ群：491088665)**
+
+**(PS:求个网上读书园地论坛邀请码)**
+
 <p align="center">
 	<a href="https://github.com/DoiiarX/NLCISBNPlugin/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/DoiiarX/NLCISBNPlugin.svg"></a>
 	<a href="https://github.com/DoiiarX/NLCISBNPlugin/network/members" target="_blank"><img src="https://img.shields.io/github/forks/DoiiarX/NLCISBNPlugin.svg"></a>
@@ -29,6 +33,9 @@
 
 - **自动元数据检索**：通过ISBN，自动从中国国家图书馆获取图书元数据。
 - **支持中图分类号**：目前唯一能获取中图分类号的Calibre插件。
+- **通过标题模糊搜索ISBN号**：通过标题，自动从中国国家图书馆获取ISBN号。
+- **自定义并发数**：用户可自定义的并发数。
+- **自定义结果上限**：用户可自定义模糊搜索时，返回结果的上限。
 
 ## 🌟返回结果示例
 ![image](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/e6906459-0457-4c8c-a872-d7eda2d8beff)
@@ -46,14 +53,25 @@
 
 以下是我们计划在未来添加到插件中的功能：
 
-- [ ] **更多定制选项**：增加用户可自定义的选项，以提供更多灵活性。
 - [ ] **更好的标题处理**：更好的标题处理。
-- [ ] **模糊搜索**：根据书名模糊搜索。根据isbn搜索isbn相同的多本书籍。
+- [ ] **更好的并发优化**：更好的并发优化，减少被封IP的几率并且增加获取效率。
+- [ ] **模糊搜索**：根据isbn搜索isbn相同的多本书籍。
+
+## ❤ 赞助 Donation
+如果你觉得本项目对你有帮助，请考虑赞助本项目，以激励我投入更多的时间进行维护与开发。
+
+If you find this project helpful, please consider supporting the project going forward. Your support is greatly appreciated.
+
+
+![Donation](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/fe7815a3-d209-4871-938d-dca7af7f67cb)
+
+**你的`star`或者`赞助`是我长期维护此项目的动力所在，由衷感谢每一位支持者，“每一次你花的钱都是在为你想要的世界投票”。 
+另外，将本项目推荐给更多的人，也是一种支持的方式，用的人越多更新的动力越足。**
 
 ## 👤游客访问
 <p align="center"> 
    <img alingn="center" src="https://profile-counter.glitch.me/NLCISBNPlugin/count.svg"  alt="NLCISBNPlugin"/>
- </p>
+</p>
 
 ## 🔧安装
 

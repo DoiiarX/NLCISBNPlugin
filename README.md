@@ -54,15 +54,20 @@
 - [ ] **模糊搜索**：根据isbn搜索isbn相同的多本书籍。
 
 ## ❤ 赞助 Donation
-如果你觉得本项目对你有帮助，请考虑赞助本项目，以激励我投入更多的时间进行维护与开发。 If you find this project helpful, please consider supporting the project going forward. Your support is greatly appreciated.
+如果你觉得本项目对你有帮助，请考虑赞助本项目，以激励我投入更多的时间进行维护与开发。
+
+If you find this project helpful, please consider supporting the project going forward. Your support is greatly appreciated.
 
 
-**你的`star`或者`赞助`是我长期维护此项目的动力所在，由衷感谢每一位支持者，“每一次你花的钱都是在为你想要的世界投票”。 另外，将本项目推荐给更多的人，也是一种支持的方式，用的人越多更新的动力越足。**
+![Donation](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/fe7815a3-d209-4871-938d-dca7af7f67cb)
+
+**你的`star`或者`赞助`是我长期维护此项目的动力所在，由衷感谢每一位支持者，“每一次你花的钱都是在为你想要的世界投票”。 
+另外，将本项目推荐给更多的人，也是一种支持的方式，用的人越多更新的动力越足。**
 
 ## 👤游客访问
 <p align="center"> 
    <img alingn="center" src="https://profile-counter.glitch.me/NLCISBNPlugin/count.svg"  alt="NLCISBNPlugin"/>
- </p>
+</p>
 
 ## 🔧安装
 

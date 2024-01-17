@@ -308,7 +308,7 @@ class NLCISBNPlugin(Source):
     author = 'Doiiars'
     capabilities = frozenset(['identify'])
     touched_fields = frozenset(
-        ['pubdate', 'tags', 'identify', 
+        ['pubdate', 'tags',
          'comments', 'publisher', 'authors', 
          'title', 'identifier:'+'nlchash', 'identifier:'+'isbn']
         )

@@ -62,8 +62,11 @@
 
 If you find this project helpful, please consider supporting the project going forward. Your support is greatly appreciated.
 
+<div align="center">
 
-![Donation](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/fe7815a3-d209-4871-938d-dca7af7f67cb)
+![image](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/174a16f6-b4fd-4645-96af-4bedf94bb035)
+
+</div>
 
 **你的`star`或者`赞助`是我长期维护此项目的动力所在，由衷感谢每一位支持者，“每一次你花的钱都是在为你想要的世界投票”。 
 另外，将本项目推荐给更多的人，也是一种支持的方式，用的人越多更新的动力越足。**

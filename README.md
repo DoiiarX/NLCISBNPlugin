@@ -38,7 +38,8 @@
 - **自定义结果上限**：用户可自定义模糊搜索时，返回结果的上限。
 
 ## 🌟返回结果示例
-![image](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/e6906459-0457-4c8c-a872-d7eda2d8beff)
+![image](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/e6906459-0457-4c8c-a872-d7eda2d8beff)[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin?ref=badge_shield)
+
 
 **返回项目包括：**
 - 书名
@@ -130,3 +131,7 @@ If you find this project helpful, please consider supporting the project going f
 
 [![Star History Chart](https://api.star-history.com/svg?repos=DoiiarX/NLCISBNPlugin&type=Date)](https://star-history.com/#DoiiarX/NLCISBNPlugin&Date)
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin?ref=badge_large)

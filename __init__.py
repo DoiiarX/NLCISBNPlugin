@@ -36,6 +36,7 @@ MAX_WORKERS = 2
 MAX_TITLE_LIST_NUM = 6
 SPIDER_BASE_SLEEP_TIME = 200
 IS_STRIP_TITLE = True
+IS_STRIP_AUTHOR = True
 
 def spider_sleep():
     """
@@ -261,6 +262,17 @@ def get_parse_metadata(html, isbn, log):
         except re.error as e:
             log.error(f"正则表达式匹配错误: {e}, title: {title}")
 
+    authors = data.get("著者", "").split(' & ')
+    if IS_STRIP_AUTHOR:
+        author_pattern = re.compile(r'^(.*?)\s+(?:著|编)')
+        stripped_authors = []
+        for author_entry in authors:
+            match = author_pattern.match(author_entry)
+            if match:
+                author_name = match.group(1)
+                stripped_authors.append(author_name)
+        authors = stripped_authors
+    
     # 从'出版项'中使用正则表达式提取格式为[2019]的'pubdate'
     pubdate_match = re.search(r',\s*(\d{4})', data.get("出版项", ""))
     pubdate = pubdate_match.group(1) if pubdate_match else ""
@@ -280,7 +292,7 @@ def get_parse_metadata(html, isbn, log):
         "comments": data.get("内容提要", ""),
         'publisher': publisher,
         'pubdate': pubdate,
-        'authors': data.get("著者", "").split(' & '),
+        'authors': authors,
         "isbn": data.get(f"{web_isbn}", f"{isbn}")
     }
     return metadata
@@ -353,6 +365,11 @@ class NLCISBNPlugin(Source):
             'is_strip_title', 'bool', IS_STRIP_TITLE,
             _('是否优化标题'),
             _('是否优化标题。如果该项为“是”，则去除标题中多余的部分。默认为“是”。')
+        ),
+        Option(
+            'is_strip_author', 'bool', IS_STRIP_AUTHOR,
+            _('是否优化作者字段'),
+            _('是否优化作者字段。如果该项为“是”，则去除作者字段中多余的部分。默认为“是”。该项可能导致错误，例如名字末尾本身带有“著/编”。')
         )
     )
     

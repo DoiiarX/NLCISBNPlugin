@@ -274,9 +274,17 @@ def get_parse_metadata(html, isbn, log):
                 stripped_authors.append(author_name)
         authors = stripped_authors
     
-    # 从'出版项'中使用正则表达式提取格式为[2019]的'pubdate'
-    pubdate_match = re.search(r',\s*(\d{4})', data.get("出版项", ""))
-    pubdate = pubdate_match.group(1) if pubdate_match else ""
+    # 使用正则表达式匹配日期
+    year, month, day = '', '', ''
+    pubdate_match = re.search(r'(\d{4})(\d{2})(\d{2})d(\d{4})', data.get("通用数据", ""))
+    if pubdate_match:
+        year = pubdate_match.group(1)
+        month = pubdate_match.group(2)
+        day = pubdate_match.group(3)
+        # 构建 "YYYY-MM-DD" 格式的日期字符串
+        pubdate = f"{year}-{month}-{day}"
+    else:
+        pubdate = ""
 
     publisher_match = re.search(r':\s*(.+),\s', data.get("出版项", ""))
     publisher = publisher_match.group(1) if publisher_match else ""
@@ -284,7 +292,8 @@ def get_parse_metadata(html, isbn, log):
     tags = data.get("主题", "").replace('--', '&')
     tags += f' & {data.get("中图分类号", "")}'
     tags += f' & {publisher}'
-    tags += f' & {pubdate}'
+    if year:
+        tags += f' & {year}'
     tags = [tag.strip() for tag in re.split(r'[&\s]+', tags) if tag.strip()]
     
     metadata = {

@@ -38,6 +38,7 @@ SPIDER_BASE_SLEEP_TIME = 200
 IS_STRIP_TITLE = True
 IS_STRIP_AUTHOR = True
 IS_NCLHASH = True
+IS_PURSETAG = False
 
 def spider_sleep():
     """
@@ -290,10 +291,11 @@ def get_parse_metadata(html, isbn, log):
     publisher = publisher_match.group(1) if publisher_match else ""
     
     tags = data.get("主题", "").replace('--', '&')
-    tags += f' & {data.get("中图分类号", "")}'
-    tags += f' & {publisher}'
-    if year:
-        tags += f' & {year}'
+    if not IS_PURSETAG:
+        tags += f' & {data.get("中图分类号", "")}'
+        tags += f' & {publisher}'
+        if year:
+            tags += f' & {year}'
     tags = [tag.strip() for tag in re.split(r'[&\s]+', tags) if tag.strip()]
     
     metadata = {
@@ -389,6 +391,11 @@ class NLCISBNPlugin(Source):
             'is_nlchash', 'bool', IS_NCLHASH,
             _('是否使用nlchash字段（实验功能）'),
             _('是否使用nlchash字段。如果该项为“否”，则去除nlchash字段。默认为“是”。该项可能有利于改善isbn相同，而标题不同的情况。')
+        ),
+        Option(
+            'is_pursetag', 'bool', IS_PURSETAG,
+            _('纯净的标签'),
+            _('是否添加“日期”和“出版社”到标签。如果该项为“否”，则不添加日期和出版社信息到标签。默认为“否”。')
         )
     )
     

@@ -39,6 +39,7 @@ IS_STRIP_TITLE = True
 IS_STRIP_AUTHOR = True
 IS_NCLHASH = True
 IS_PURSETAG = False
+IS_FUZZY_SEARCH_WITH_AUTHOR = True
 
 def spider_sleep():
     """
@@ -399,6 +400,11 @@ class NLCISBNPlugin(Source):
             'is_pursetag', 'bool', IS_PURSETAG,
             _('纯净的标签'),
             _('是否添加“日期”和“出版社”到标签。如果该项为“否”，则不添加日期和出版社信息到标签。默认为“否”。')
+        ),
+        Option(
+            'is_fuzzy_search_with_author', 'bool', IS_FUZZY_SEARCH_WITH_AUTHOR,
+            _('是否使用作者信息进行模糊搜索（实验功能）'),
+            _('是否将作者信息添加到标题中进行模糊搜索。如果该项为“是”，则将作者信息添加到标题中进行模糊搜索。默认为“是”。')
         )
     )
     
@@ -415,7 +421,7 @@ class NLCISBNPlugin(Source):
         metadata = None
         if isbn:
           metadata = isbn2meta(isbn, log)
-          log.info(f"根据isbn获取metadata。")
+          log.info(f"正在根据isbn获取metadata...")
           if metadata:
               result_queue.put(metadata)
         else:
@@ -423,7 +429,9 @@ class NLCISBNPlugin(Source):
             # 根据书名获取metadata
             metadata = None
             if title:
-                log.info(f"根据书名获取metadata")
+                log.info(f"正在根据书名获取metadata...")
+                if IS_FUZZY_SEARCH_WITH_AUTHOR and authors and isinstance(authors, list):
+                    title += authors[0]
                 metadatas = title2metadata(title, log, result_queue, self.clean_downloaded_metadata,
                                             max_title_list_num = self.prefs.get('max_title_list_num'),
                                             max_workers = self.prefs.get('max_workers')

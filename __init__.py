@@ -354,7 +354,7 @@ class NLCISBNPlugin(Source):
     name = '国家图书馆ISBN插件'
     description = '使用ISBN从中国国家图书馆获取元数据的Calibre插件。'
     supported_platforms = ['windows', 'osx', 'linux']
-    version = (1, 2, 0)
+    version = (1, 2, 1)
     author = 'Doiiars'
     capabilities = frozenset(['identify'])
     touched_fields = frozenset(

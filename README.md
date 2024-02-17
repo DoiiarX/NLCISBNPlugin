@@ -4,11 +4,6 @@
 
 **(交流反馈QQ群：491708665)**
 
-**(PS:求个网上读书园地论坛邀请码)**
-
-**(交流反馈QQ群：491088665)**
-**(PS:求个网上读书园地论坛邀请码)**
-
 <p align="center">
 	<a href="https://github.com/DoiiarX/NLCISBNPlugin/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/DoiiarX/NLCISBNPlugin.svg"></a>
 	<a href="https://github.com/DoiiarX/NLCISBNPlugin/network/members" target="_blank"><img src="https://img.shields.io/github/forks/DoiiarX/NLCISBNPlugin.svg"></a>
@@ -58,8 +53,6 @@
 
 以下是我们计划在未来添加到插件中的功能：
 
-- [ ] **更好的标题处理**：更好的标题处理。
-- [ ] **更好的并发优化**：更好的并发优化，减少被封IP的几率并且增加获取效率。
 - [ ] **模糊搜索**：根据isbn搜索isbn相同的多本书籍。
 
 ## ❤ 赞助 Donation

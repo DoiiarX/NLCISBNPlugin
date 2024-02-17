@@ -35,6 +35,7 @@ HEADERS = {
 MAX_WORKERS = 2
 MAX_TITLE_LIST_NUM = 6
 SPIDER_BASE_SLEEP_TIME = 200
+IS_STRIP_TITLE = True
 
 def spider_sleep():
     """
@@ -248,6 +249,17 @@ def get_parse_metadata(html, isbn, log):
                 data.update({prev_td1: '\n'.join([prev_td2, td2]).strip()})
             prev_td1 = td1.strip()
             prev_td2 = td2.strip()
+            
+    # 优化标题格式
+    title = data.get("题名与责任", f"{isbn}")
+    if IS_STRIP_TITLE:
+        pattern = r"([\u4e00-\u9fa5]+[\w\s]+)"
+        try:
+            match = re.search(pattern, title)
+            if match:
+                title = match.group(1)
+        except re.error as e:
+            log.error(f"正则表达式匹配错误: {e}, title: {title}")
 
     # 从'出版项'中使用正则表达式提取格式为[2019]的'pubdate'
     pubdate_match = re.search(r',\s*(\d{4})', data.get("出版项", ""))
@@ -263,7 +275,7 @@ def get_parse_metadata(html, isbn, log):
     tags = [tag.strip() for tag in re.split(r'[&\s]+', tags) if tag.strip()]
     
     metadata = {
-        "title": data.get("题名与责任", f"{isbn}"),
+        "title": title,
         "tags": tags,
         "comments": data.get("内容提要", ""),
         'publisher': publisher,
@@ -336,6 +348,11 @@ class NLCISBNPlugin(Source):
             'spider_base_sleep_time', 'number', SPIDER_BASE_SLEEP_TIME,
             _('爬虫基础间隔时间'),
             _('爬虫两次爬取的间隔时间（单位：ms毫秒）。爬虫间隔时间 = 爬虫基础间隔时间 + 30 ~ 600 ms 的随机间隔时间')
+        ),
+        Option(
+            'is_strip_title', 'bool', IS_STRIP_TITLE,
+            _('是否优化标题'),
+            _('是否优化标题。如果该项为“是”，则去除标题中多余的部分。默认为“是”。')
         )
     )
     

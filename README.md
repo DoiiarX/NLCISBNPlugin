@@ -6,6 +6,9 @@
 
 **(PS:求个网上读书园地论坛邀请码)**
 
+**(交流反馈QQ群：491088665)**
+**(PS:求个网上读书园地论坛邀请码)**
+
 <p align="center">
 	<a href="https://github.com/DoiiarX/NLCISBNPlugin/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/DoiiarX/NLCISBNPlugin.svg"></a>
 	<a href="https://github.com/DoiiarX/NLCISBNPlugin/network/members" target="_blank"><img src="https://img.shields.io/github/forks/DoiiarX/NLCISBNPlugin.svg"></a>
@@ -38,7 +41,8 @@
 - **自定义结果上限**：用户可自定义模糊搜索时，返回结果的上限。
 
 ## 🌟返回结果示例
-![image](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/e6906459-0457-4c8c-a872-d7eda2d8beff)[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin?ref=badge_shield)
+![image](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/e6906459-0457-4c8c-a872-d7eda2d8beff)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin?ref=badge_shield)
 
 
 **返回项目包括：**
@@ -63,11 +67,9 @@
 
 If you find this project helpful, please consider supporting the project going forward. Your support is greatly appreciated.
 
-<div align="center">
 
-![image](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/174a16f6-b4fd-4645-96af-4bedf94bb035)
+![Donation](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/fe7815a3-d209-4871-938d-dca7af7f67cb)
 
-</div>
 
 **你的`star`或者`赞助`是我长期维护此项目的动力所在，由衷感谢每一位支持者，“每一次你花的钱都是在为你想要的世界投票”。 
 另外，将本项目推荐给更多的人，也是一种支持的方式，用的人越多更新的动力越足。**

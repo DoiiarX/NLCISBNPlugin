@@ -34,6 +34,23 @@ HEADERS = {
 
 MAX_WORKERS = 2
 MAX_TITLE_LIST_NUM = 6
+SPIDER_BASE_SLEEP_TIME = 200
+IS_STRIP_TITLE = True
+IS_STRIP_AUTHOR = True
+IS_NCLHASH = True
+IS_PURSETAG = False
+IS_FUZZY_SEARCH_WITH_AUTHOR = True
+
+def spider_sleep():
+    """
+    模拟爬虫睡眠时间。(结果近似正态分布。)
+
+    函数通过模拟掷8个120面的骰子并求和，加上一个随机数和基础睡眠时间，来确定睡眠时间，并使当前线程进入睡眠状态。
+    """
+    sleep_time = sum(randint(1, 120) for _ in range(8))  # 掷3个8到120面的骰子并求和
+    sleep_time = sleep_time + randint(30, 600) + SPIDER_BASE_SLEEP_TIME
+    time.sleep(sleep_time / 1000)
+
 
 def extract_data_info(html):
     pattern = r"第\s+(\d+)\s+条记录\(共\s+(\d+)\s+条\)"
@@ -88,9 +105,8 @@ def title2metadata(title, log, result_queue, clean_downloaded_metadata, max_work
 
     titlelist = parse_search_list(response_text, log)
     
-    sleep_time = 0
-    sleep_time += randint(3,30)
-    time.sleep(sleep_time/100)
+    spider_sleep()
+
     
     if len(titlelist)>MAX_TITLE_LIST_NUM:
         titlelist = titlelist[:MAX_TITLE_LIST_NUM]
@@ -109,10 +125,7 @@ def url2metadata(url, log, result_queue, clean_downloaded_metadata, max_workers=
         raise TypeError("url必须是字符串")
     search_url = url
     
-    sleep_time = 0
-    for _ in range(8):
-        sleep_time += randint(4, 120)
-    time.sleep(sleep_time/100)
+    spider_sleep()
 
     try:
         response = urllib.request.urlopen(urllib.request.Request(search_url, headers=HEADERS), timeout=10)
@@ -148,17 +161,17 @@ def isbn2meta(isbn, log):
     :return: 解析后的元数据或None（获取失败时）。
     '''
     if not isinstance(isbn, str):
-        log("ISBN必须是字符串")
+        log.info("ISBN必须是字符串")
         raise TypeError("ISBN必须是字符串")
 
     try:
         isbn_match = re.match(r"\d{10,}", isbn).group()
     except AttributeError:
-        log(f"无效的ISBN代码: {isbn}")
+        log.info(f"无效的ISBN代码: {isbn}")
         raise ValueError(f"无效的ISBN代码: {isbn}")
 
     if isbn_match != isbn:
-        log(f"无效的ISBN代码: {isbn}")
+        log.info(f"无效的ISBN代码: {isbn}")
         raise ValueError(f"无效的ISBN代码: {isbn}")
 
     dynamic_url = get_dynamic_url(log)
@@ -195,11 +208,13 @@ def parse_isbn(html, log):
         if len(isbn) == 10:
             isbn = '978'+isbn
     else:
-        log(f'未找到ISBN号')
+        log.info(f'未找到ISBN号')
         isbn = ''
     
     # 记录找到的或未找到的ISBN号，并返回结果
-    log(f'解析得到的ISBN号: {isbn}')
+
+    log.info(f'解析得到的ISBN号: {isbn}')
+
     return isbn
 
 
@@ -242,27 +257,62 @@ def get_parse_metadata(html, isbn, log):
                 data.update({prev_td1: '\n'.join([prev_td2, td2]).strip()})
             prev_td1 = td1.strip()
             prev_td2 = td2.strip()
+            
+    # 优化标题格式
+    title = data.get("题名与责任", f"{isbn}")
+    if IS_STRIP_TITLE:
+        pattern = r"([\u4e00-\u9fa5]+[\w\s]+)"
+        try:
+            match = re.search(pattern, title)
+            if match:
+                title = match.group(1)
+        except re.error as e:
+            log.error(f"正则表达式匹配错误: {e}, title: {title}")
 
-    # 从'出版项'中使用正则表达式提取格式为[2019]的'pubdate'
-    pubdate_match = re.search(r',\s*(\d{4})', data.get("出版项", ""))
-    pubdate = pubdate_match.group(1) if pubdate_match else ""
+    authors = data.get("著者", "").split(' & ')
+    if IS_STRIP_AUTHOR:
+        author_pattern = re.compile(r'^(.*?)\s+(?:著|编)')
+        try:
+            stripped_authors = []
+            for author_entry in authors:
+                match = author_pattern.match(author_entry)
+                if match:
+                    author_name = match.group(1)
+                    stripped_authors.append(author_name)
+            authors = stripped_authors
+        except re.error as e:
+            log.error(f"正则表达式匹配错误: {e}, authors: {authors}")
+
+    # 使用正则表达式匹配日期
+    year, month, day = '', '', ''
+    pubdate_match = re.search(r'(\d{4})(\d{2})(\d{2})d(\d{4})', data.get("通用数据", ""))
+    if pubdate_match:
+        year = pubdate_match.group(1)
+        month = pubdate_match.group(2)
+        day = pubdate_match.group(3)
+        # 构建 "YYYY-MM-DD" 格式的日期字符串
+        pubdate = f"{year}-{month}-{day}"
+    else:
+        pubdate = ""
 
     publisher_match = re.search(r':\s*(.+),\s', data.get("出版项", ""))
     publisher = publisher_match.group(1) if publisher_match else ""
     
     tags = data.get("主题", "").replace('--', '&')
-    tags += f' & {data.get("中图分类号", "")}'
-    tags += f' & {publisher}'
-    tags += f' & {pubdate}'
+    if not IS_PURSETAG:
+        tags += f' & {data.get("中图分类号", "")}'
+        tags += f' & {publisher}'
+        if year:
+            tags += f' & {year}'
     tags = [tag.strip() for tag in re.split(r'[&\s]+', tags) if tag.strip()]
     
     metadata = {
-        "title": data.get("题名与责任", f"{isbn}"),
+        "title": title,
         "tags": tags,
         "comments": data.get("内容提要", ""),
         'publisher': publisher,
         'pubdate': pubdate,
-        'authors': data.get("著者", "").split(' & '),
+        'authors': authors,
         "isbn": data.get(f"{web_isbn}", f"{isbn}")
     }
     return metadata
@@ -279,9 +329,15 @@ def to_metadata(book, add_translator_to_author, log):
         authors = (book['authors'] + book['translators']
                    ) if add_translator_to_author and book.get('translators', None) else book['authors']
         mi = MetaInformation(book['title'], authors)
-        mi.identifiers = {PROVIDER_ID: book.get('isbn', ''),
-                          'nlchash': f"{hash_utf8_string(book['title']+book.get('pubdate', None))}"
-                          }
+
+        if IS_NCLHASH:
+            mi.identifiers = {PROVIDER_ID: book.get('isbn', ''),
+                            'nlchash': f"{hash_utf8_string(book['title']+book.get('pubdate', None))}"
+                            }
+        else:
+            mi.identifiers = {PROVIDER_ID: book.get('isbn', '')}
+
+
         # mi.url = book['url']
         # mi.cover = book.get('cover', None)
         mi.publisher = book['publisher']
@@ -304,7 +360,9 @@ class NLCISBNPlugin(Source):
     name = '国家图书馆ISBN插件'
     description = '使用ISBN从中国国家图书馆获取元数据的Calibre插件。'
     supported_platforms = ['windows', 'osx', 'linux']
-    version = (1, 2, 0)
+
+    version = (1, 2, 1)
+
     author = 'Doiiars'
     capabilities = frozenset(['identify'])
     touched_fields = frozenset(
@@ -325,6 +383,37 @@ class NLCISBNPlugin(Source):
             'max_title_list_num', 'number', MAX_TITLE_LIST_NUM,
             _('最大返回量'),
             _('通过标题搜索时，最多返回多少数据。请求量过多可能因为请求过于频繁被封锁IP。')
+        ),
+        Option(
+            'spider_base_sleep_time', 'number', SPIDER_BASE_SLEEP_TIME,
+            _('爬虫基础间隔时间'),
+            _('爬虫两次爬取的间隔时间（单位：ms毫秒）。爬虫间隔时间 = 爬虫基础间隔时间 + 30 ~ 600 ms 的随机间隔时间')
+        ),
+        Option(
+            'is_strip_title', 'bool', IS_STRIP_TITLE,
+            _('是否优化标题（实验功能）'),
+            _('是否优化标题。如果该项为“是”，则去除标题中多余的部分。默认为“是”。')
+        ),
+        Option(
+            'is_strip_author', 'bool', IS_STRIP_AUTHOR,
+            _('是否优化作者字段（实验功能）'),
+            _('是否优化作者字段。如果该项为“是”，则去除作者字段中多余的部分。默认为“是”。该项可能导致错误，例如名字末尾本身带有“著/编”。')
+        ),
+        Option(
+            'is_nlchash', 'bool', IS_NCLHASH,
+            _('是否使用nlchash字段（实验功能）'),
+            _('是否使用nlchash字段。如果该项为“否”，则去除nlchash字段。默认为“是”。该项可能有利于改善isbn相同，而标题不同的情况。')
+        ),
+        Option(
+            'is_pursetag', 'bool', IS_PURSETAG,
+            _('纯净的标签'),
+            _('是否添加“日期”和“出版社”到标签。如果该项为“否”，则不添加日期和出版社信息到标签。默认为“否”。')
+        ),
+        Option(
+            'is_fuzzy_search_with_author', 'bool', IS_FUZZY_SEARCH_WITH_AUTHOR,
+            _('是否使用作者信息进行模糊搜索（实验功能）'),
+            _('是否将作者信息添加到标题中进行模糊搜索。如果该项为“是”，则将作者信息添加到标题中进行模糊搜索。默认为“是”。')
+
         )
     )
     
@@ -341,21 +430,26 @@ class NLCISBNPlugin(Source):
         metadata = None
         if isbn:
           metadata = isbn2meta(isbn, log)
-          log(f"根据isbn获取metadata。")
+
+          log.info(f"正在根据isbn获取metadata...")
           if metadata:
               result_queue.put(metadata)
         else:
-            log(f"未检测到isbn。")
+            log.info(f"未检测到isbn。")
             # 根据书名获取metadata
             metadata = None
             if title:
-                log(f"根据书名获取metadata")
+                log.info(f"正在根据书名获取metadata...")
+                if IS_FUZZY_SEARCH_WITH_AUTHOR and authors and isinstance(authors, list):
+                    title += authors[0]
+
                 metadatas = title2metadata(title, log, result_queue, self.clean_downloaded_metadata,
                                             max_title_list_num = self.prefs.get('max_title_list_num'),
                                             max_workers = self.prefs.get('max_workers')
                                             )
             else:
-                log(f'未检测到title。')
+                log.info(f'未检测到title。')
+
             
     def download_cover(self, log, result_queue, abort, title=None, authors=None, identifiers={}, timeout=30, get_best_cover=False):
         return

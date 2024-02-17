@@ -51,6 +51,7 @@ def spider_sleep():
     sleep_time = sleep_time + randint(30, 600) + SPIDER_BASE_SLEEP_TIME
     time.sleep(sleep_time / 1000)
 
+
 def extract_data_info(html):
     pattern = r"第\s+(\d+)\s+条记录\(共\s+(\d+)\s+条\)"
     match = re.search(pattern, html)
@@ -105,6 +106,7 @@ def title2metadata(title, log, result_queue, clean_downloaded_metadata, max_work
     titlelist = parse_search_list(response_text, log)
     
     spider_sleep()
+
     
     if len(titlelist)>MAX_TITLE_LIST_NUM:
         titlelist = titlelist[:MAX_TITLE_LIST_NUM]
@@ -210,7 +212,9 @@ def parse_isbn(html, log):
         isbn = ''
     
     # 记录找到的或未找到的ISBN号，并返回结果
+
     log.info(f'解析得到的ISBN号: {isbn}')
+
     return isbn
 
 
@@ -325,12 +329,14 @@ def to_metadata(book, add_translator_to_author, log):
         authors = (book['authors'] + book['translators']
                    ) if add_translator_to_author and book.get('translators', None) else book['authors']
         mi = MetaInformation(book['title'], authors)
+
         if IS_NCLHASH:
             mi.identifiers = {PROVIDER_ID: book.get('isbn', ''),
                             'nlchash': f"{hash_utf8_string(book['title']+book.get('pubdate', None))}"
                             }
         else:
             mi.identifiers = {PROVIDER_ID: book.get('isbn', '')}
+
 
         # mi.url = book['url']
         # mi.cover = book.get('cover', None)
@@ -354,7 +360,9 @@ class NLCISBNPlugin(Source):
     name = '国家图书馆ISBN插件'
     description = '使用ISBN从中国国家图书馆获取元数据的Calibre插件。'
     supported_platforms = ['windows', 'osx', 'linux']
+
     version = (1, 2, 1)
+
     author = 'Doiiars'
     capabilities = frozenset(['identify'])
     touched_fields = frozenset(
@@ -405,6 +413,7 @@ class NLCISBNPlugin(Source):
             'is_fuzzy_search_with_author', 'bool', IS_FUZZY_SEARCH_WITH_AUTHOR,
             _('是否使用作者信息进行模糊搜索（实验功能）'),
             _('是否将作者信息添加到标题中进行模糊搜索。如果该项为“是”，则将作者信息添加到标题中进行模糊搜索。默认为“是”。')
+
         )
     )
     
@@ -421,6 +430,7 @@ class NLCISBNPlugin(Source):
         metadata = None
         if isbn:
           metadata = isbn2meta(isbn, log)
+
           log.info(f"正在根据isbn获取metadata...")
           if metadata:
               result_queue.put(metadata)
@@ -432,12 +442,14 @@ class NLCISBNPlugin(Source):
                 log.info(f"正在根据书名获取metadata...")
                 if IS_FUZZY_SEARCH_WITH_AUTHOR and authors and isinstance(authors, list):
                     title += authors[0]
+
                 metadatas = title2metadata(title, log, result_queue, self.clean_downloaded_metadata,
                                             max_title_list_num = self.prefs.get('max_title_list_num'),
                                             max_workers = self.prefs.get('max_workers')
                                             )
             else:
                 log.info(f'未检测到title。')
+
             
     def download_cover(self, log, result_queue, abort, title=None, authors=None, identifiers={}, timeout=30, get_best_cover=False):
         return

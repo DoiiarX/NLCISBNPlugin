@@ -1,6 +1,10 @@
-# 🏠中国国家图书馆ISBN Calibre Metadata 源插件
+# 🏠[中国国家图书馆ISBN Calibre Metadata 源插件](https://notion.doiiars.com/article/NLCISBNPlugin)
 
-该项目是一个用于 [Calibre](https://calibre-ebook.com/) 电子书管理软件的元数据源插件，旨在从[中国国家图书馆](http://opac.nlc.cn/F)获取图书信息，特别是基于ISBN。此插件允许用户轻松地将图书信息添加到其Calibre库中，包括书名、作者、出版日期、中图分类号等重要信息。
+该项目是一个由[Doiiars](https://github.com/DoiiarX)创建的用于 [Calibre](https://calibre-ebook.com/) 电子书管理软件的元数据源插件，旨在从[中国国家图书馆](http://opac.nlc.cn/F)获取图书信息，特别是基于ISBN。此插件允许用户轻松地将图书信息添加到其Calibre库中，包括书名、作者、出版日期、中图分类号等重要信息。
+
+**(交流反馈QQ群：491708665)**
+
+**(PS:求个网上读书园地论坛邀请码)**
 
 **(交流反馈QQ群：491088665)**
 **(PS:求个网上读书园地论坛邀请码)**
@@ -38,6 +42,8 @@
 
 ## 🌟返回结果示例
 ![image](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/e6906459-0457-4c8c-a872-d7eda2d8beff)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin?ref=badge_shield)
+
 
 **返回项目包括：**
 - 书名
@@ -63,6 +69,7 @@ If you find this project helpful, please consider supporting the project going f
 
 
 ![Donation](https://github.com/DoiiarX/NLCISBNPlugin/assets/25550075/fe7815a3-d209-4871-938d-dca7af7f67cb)
+
 
 **你的`star`或者`赞助`是我长期维护此项目的动力所在，由衷感谢每一位支持者，“每一次你花的钱都是在为你想要的世界投票”。 
 另外，将本项目推荐给更多的人，也是一种支持的方式，用的人越多更新的动力越足。**
@@ -126,3 +133,7 @@ If you find this project helpful, please consider supporting the project going f
 
 [![Star History Chart](https://api.star-history.com/svg?repos=DoiiarX/NLCISBNPlugin&type=Date)](https://star-history.com/#DoiiarX/NLCISBNPlugin&Date)
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FDoiiarX%2FNLCISBNPlugin?ref=badge_large)

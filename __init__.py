@@ -267,14 +267,17 @@ def get_parse_metadata(html, isbn, log):
     authors = data.get("著者", "").split(' & ')
     if IS_STRIP_AUTHOR:
         author_pattern = re.compile(r'^(.*?)\s+(?:著|编)')
-        stripped_authors = []
-        for author_entry in authors:
-            match = author_pattern.match(author_entry)
-            if match:
-                author_name = match.group(1)
-                stripped_authors.append(author_name)
-        authors = stripped_authors
-    
+        try:
+            stripped_authors = []
+            for author_entry in authors:
+                match = author_pattern.match(author_entry)
+                if match:
+                    author_name = match.group(1)
+                    stripped_authors.append(author_name)
+            authors = stripped_authors
+        except re.error as e:
+            log.error(f"正则表达式匹配错误: {e}, authors: {authors}")
+
     # 使用正则表达式匹配日期
     year, month, day = '', '', ''
     pubdate_match = re.search(r'(\d{4})(\d{2})(\d{2})d(\d{4})', data.get("通用数据", ""))

@@ -37,6 +37,7 @@ MAX_TITLE_LIST_NUM = 6
 SPIDER_BASE_SLEEP_TIME = 200
 IS_STRIP_TITLE = True
 IS_STRIP_AUTHOR = True
+IS_NCLHASH = True
 
 def spider_sleep():
     """
@@ -309,9 +310,13 @@ def to_metadata(book, add_translator_to_author, log):
         authors = (book['authors'] + book['translators']
                    ) if add_translator_to_author and book.get('translators', None) else book['authors']
         mi = MetaInformation(book['title'], authors)
-        mi.identifiers = {PROVIDER_ID: book.get('isbn', ''),
-                          'nlchash': f"{hash_utf8_string(book['title']+book.get('pubdate', None))}"
-                          }
+        if IS_NCLHASH:
+            mi.identifiers = {PROVIDER_ID: book.get('isbn', ''),
+                            'nlchash': f"{hash_utf8_string(book['title']+book.get('pubdate', None))}"
+                            }
+        else:
+            mi.identifiers = {PROVIDER_ID: book.get('isbn', '')}
+
         # mi.url = book['url']
         # mi.cover = book.get('cover', None)
         mi.publisher = book['publisher']
@@ -363,13 +368,18 @@ class NLCISBNPlugin(Source):
         ),
         Option(
             'is_strip_title', 'bool', IS_STRIP_TITLE,
-            _('是否优化标题'),
+            _('是否优化标题（实验功能）'),
             _('是否优化标题。如果该项为“是”，则去除标题中多余的部分。默认为“是”。')
         ),
         Option(
             'is_strip_author', 'bool', IS_STRIP_AUTHOR,
-            _('是否优化作者字段'),
+            _('是否优化作者字段（实验功能）'),
             _('是否优化作者字段。如果该项为“是”，则去除作者字段中多余的部分。默认为“是”。该项可能导致错误，例如名字末尾本身带有“著/编”。')
+        ),
+        Option(
+            'is_nlchash', 'bool', IS_NCLHASH,
+            _('是否使用nlchash字段（实验功能）'),
+            _('是否使用nlchash字段。如果该项为“否”，则去除nlchash字段。默认为“是”。该项可能有利于改善isbn相同，而标题不同的情况。')
         )
     )
     

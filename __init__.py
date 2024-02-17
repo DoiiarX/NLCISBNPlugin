@@ -34,6 +34,17 @@ HEADERS = {
 
 MAX_WORKERS = 2
 MAX_TITLE_LIST_NUM = 6
+SPIDER_BASE_SLEEP_TIME = 200
+
+def spider_sleep():
+    """
+    模拟爬虫睡眠时间。(结果近似正态分布。)
+
+    函数通过模拟掷8个120面的骰子并求和，加上一个随机数和基础睡眠时间，来确定睡眠时间，并使当前线程进入睡眠状态。
+    """
+    sleep_time = sum(randint(1, 120) for _ in range(8))  # 掷3个8到120面的骰子并求和
+    sleep_time = sleep_time + randint(30, 600) + SPIDER_BASE_SLEEP_TIME
+    time.sleep(sleep_time / 1000)
 
 def extract_data_info(html):
     pattern = r"第\s+(\d+)\s+条记录\(共\s+(\d+)\s+条\)"
@@ -88,9 +99,7 @@ def title2metadata(title, log, result_queue, clean_downloaded_metadata, max_work
 
     titlelist = parse_search_list(response_text, log)
     
-    sleep_time = 0
-    sleep_time += randint(3,30)
-    time.sleep(sleep_time/100)
+    spider_sleep()
     
     if len(titlelist)>MAX_TITLE_LIST_NUM:
         titlelist = titlelist[:MAX_TITLE_LIST_NUM]
@@ -109,10 +118,7 @@ def url2metadata(url, log, result_queue, clean_downloaded_metadata, max_workers=
         raise TypeError("url必须是字符串")
     search_url = url
     
-    sleep_time = 0
-    for _ in range(8):
-        sleep_time += randint(4, 120)
-    time.sleep(sleep_time/100)
+    spider_sleep()
 
     try:
         response = urllib.request.urlopen(urllib.request.Request(search_url, headers=HEADERS), timeout=10)
@@ -325,6 +331,11 @@ class NLCISBNPlugin(Source):
             'max_title_list_num', 'number', MAX_TITLE_LIST_NUM,
             _('最大返回量'),
             _('通过标题搜索时，最多返回多少数据。请求量过多可能因为请求过于频繁被封锁IP。')
+        ),
+        Option(
+            'spider_base_sleep_time', 'number', SPIDER_BASE_SLEEP_TIME,
+            _('爬虫基础间隔时间'),
+            _('爬虫两次爬取的间隔时间（单位：ms毫秒）。爬虫间隔时间 = 爬虫基础间隔时间 + 30 ~ 600 ms 的随机间隔时间')
         )
     )
     

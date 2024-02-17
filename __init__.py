@@ -157,17 +157,17 @@ def isbn2meta(isbn, log):
     :return: 解析后的元数据或None（获取失败时）。
     '''
     if not isinstance(isbn, str):
-        log("ISBN必须是字符串")
+        log.info("ISBN必须是字符串")
         raise TypeError("ISBN必须是字符串")
 
     try:
         isbn_match = re.match(r"\d{10,}", isbn).group()
     except AttributeError:
-        log(f"无效的ISBN代码: {isbn}")
+        log.info(f"无效的ISBN代码: {isbn}")
         raise ValueError(f"无效的ISBN代码: {isbn}")
 
     if isbn_match != isbn:
-        log(f"无效的ISBN代码: {isbn}")
+        log.info(f"无效的ISBN代码: {isbn}")
         raise ValueError(f"无效的ISBN代码: {isbn}")
 
     dynamic_url = get_dynamic_url(log)
@@ -204,11 +204,11 @@ def parse_isbn(html, log):
         if len(isbn) == 10:
             isbn = '978'+isbn
     else:
-        log(f'未找到ISBN号')
+        log.info(f'未找到ISBN号')
         isbn = ''
     
     # 记录找到的或未找到的ISBN号，并返回结果
-    log(f'解析得到的ISBN号: {isbn}')
+    log.info(f'解析得到的ISBN号: {isbn}')
     return isbn
 
 
@@ -405,21 +405,21 @@ class NLCISBNPlugin(Source):
         metadata = None
         if isbn:
           metadata = isbn2meta(isbn, log)
-          log(f"根据isbn获取metadata。")
+          log.info(f"根据isbn获取metadata。")
           if metadata:
               result_queue.put(metadata)
         else:
-            log(f"未检测到isbn。")
+            log.info(f"未检测到isbn。")
             # 根据书名获取metadata
             metadata = None
             if title:
-                log(f"根据书名获取metadata")
+                log.info(f"根据书名获取metadata")
                 metadatas = title2metadata(title, log, result_queue, self.clean_downloaded_metadata,
                                             max_title_list_num = self.prefs.get('max_title_list_num'),
                                             max_workers = self.prefs.get('max_workers')
                                             )
             else:
-                log(f'未检测到title。')
+                log.info(f'未检测到title。')
             
     def download_cover(self, log, result_queue, abort, title=None, authors=None, identifiers={}, timeout=30, get_best_cover=False):
         return

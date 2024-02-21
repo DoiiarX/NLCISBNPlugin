@@ -2,7 +2,7 @@
 
 该项目是一个由[Doiiars](https://github.com/DoiiarX)创建的用于 [Calibre](https://calibre-ebook.com/) 电子书管理软件的元数据源插件，旨在从[中国国家图书馆](http://opac.nlc.cn/F)获取图书信息，特别是基于ISBN。此插件允许用户轻松地将图书信息添加到其Calibre库中，包括书名、作者、出版日期、中图分类号等重要信息。
 
-**(交流反馈QQ群：491708665)**
+**(交流反馈QQ群：[491708665 (一键加群)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=h30pFZuOws8XtP9kR13807pV9PsQQ_Gn&authKey=82bXfkY29udyKMXwVd6B2bd%2BOrsIo8rtPx7myJFH%2Fjhh%2BO5pNJlDqtZBo4wXM7R3&noverify=0&group_code=491708665))**
 
 <p align="center">
 	<a href="https://github.com/DoiiarX/NLCISBNPlugin/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/DoiiarX/NLCISBNPlugin.svg"></a>

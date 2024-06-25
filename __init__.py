@@ -261,7 +261,7 @@ def get_parse_metadata(html, isbn, log):
     # 优化标题格式
     title = data.get("题名与责任", f"{isbn}")
     if IS_STRIP_TITLE:
-        pattern = r"([\u4e00-\u9fa5]+[\w\s]+)"
+        pattern = r"([\u4e00-\u9fa5a-zA-Z0-9]+(?:[\u4e00-\u9fa5a-zA-Z0-9\s]+)?)(?=\s\[[\u4e00-\u9fa5]{2}\])" #
         try:
             match = re.search(pattern, title)
             if match:

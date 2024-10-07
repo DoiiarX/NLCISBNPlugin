@@ -71,6 +71,8 @@ If you find this project helpful, please consider supporting the project going f
 <p align="center"> 
    <img alingn="center" src="https://profile-counter.glitch.me/NLCISBNPlugin/count.svg"  alt="NLCISBNPlugin"/>
 </p>
+## 📺视频教程
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113266105779507&bvid=BV1Mv12YvErr&cid=26186353310&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
 
 ## 🔧安装
 

@@ -126,6 +126,12 @@ If you find this project helpful, please consider supporting the project going f
 
 感谢您对中国国家图书馆ISBN Calibre Metadata 源插件的兴趣和支持！如果您有任何问题或建议，欢迎在 GitHub 上的问题部分提出。
 
+## 💥​相关项目推荐
+
+1. EbookDataGeter 是一个基于 NLCISBNPlugin 的改进项目，同时也是 EbookDataTools 系列工具的第二个项目，本项目提供了一个简单易用的图书数据获取工具。 如果你希望摆脱calibre的繁复，只希望获得纯粹的书籍元数据，那么EbookDataGeter就值得你去尝试。
+
+https://github.com/Hellohistory/EbookDataGeter
+
 ## 📊Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=DoiiarX/NLCISBNPlugin&type=Date)](https://star-history.com/#DoiiarX/NLCISBNPlugin&Date)

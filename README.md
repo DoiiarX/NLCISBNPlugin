@@ -74,7 +74,7 @@ If you find this project helpful, please consider supporting the project going f
 
 ## 📺视频教程
 
-[![](https://i1.hdslb.com/bfs/archive/e1735cf24676956d4d56d95effa8cd6605153a00.jpg)](https://player.bilibili.com/player.html?aid=683633468&bvid=BV1jS4y1w7SW&cid=711074429&page=1)
+[![](https://i1.hdslb.com/bfs/archive/e1735cf24676956d4d56d95effa8cd6605153a00.jpg)](https://www.bilibili.com/video/BV1Mv12YvErr)
 
 ## 🔧安装
 

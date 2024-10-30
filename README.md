@@ -135,13 +135,13 @@ https://github.com/Hellohistory/EbookDataGeter
 ![image](https://github.com/user-attachments/assets/de54f42a-d2a2-4e15-8b3e-3209adc0d46f)
 
 
-**2. managebooks 是一款优雅的个人实体书图书管理工具，让你的藏书井然有序。告别重复购书，轻松管理每一本珍藏。**
+**2. managebooks 是一款优雅的 _个人实体书_ 图书管理工具，让你的藏书井然有序。告别重复购书，轻松管理每一本珍藏。**
 
 ✨核心特色
 
 多样化展示：封面墙、列表、表格等多种视图模式，随心切换
 
-智能录入：支持ISBN扫码录入，自动获取豆瓣图书信息
+智能录入：支持ISBN录入，自动获取豆瓣图书信息
 
 数据本地化：所有数据存储在本地，安全可靠无忧
 
@@ -159,7 +159,8 @@ https://github.com/Hellohistory/EbookDataGeter
 
 https://www.douban.com/group/topic/296998935/?_i=0261689D4vGJ3w
 
-![image](https://github.com/user-attachments/assets/8d21037e-f914-4637-a054-daa31f32d534)
+![4R%O)CMXNC`} M)_EV _K4S](https://github.com/user-attachments/assets/9e1179bd-5ca7-4f66-863d-44c083d50f62)
+
 
 
 ## 📊Star History

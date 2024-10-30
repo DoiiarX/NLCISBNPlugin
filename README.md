@@ -126,11 +126,34 @@ If you find this project helpful, please consider supporting the project going f
 
 感谢您对中国国家图书馆ISBN Calibre Metadata 源插件的兴趣和支持！如果您有任何问题或建议，欢迎在 GitHub 上的问题部分提出。
 
-## 💥​相关项目推荐
+## 💥​相关项目推荐（EbookDataGeter、managebooks）
 
-1. EbookDataGeter 是一个基于 NLCISBNPlugin 的改进项目，同时也是 EbookDataTools 系列工具的第二个项目，本项目提供了一个简单易用的图书数据获取工具。 如果你希望摆脱calibre的繁复，只希望获得纯粹的书籍元数据，那么EbookDataGeter就值得你去尝试。
+**1. EbookDataGeter 是一个基于 NLCISBNPlugin 的改进项目，同时也是 EbookDataTools 系列工具的第二个项目，本项目提供了一个简单易用的图书数据获取工具。 如果你希望摆脱calibre的繁复，只希望获得纯粹的书籍元数据，那么EbookDataGeter就值得你去尝试。**
 
 https://github.com/Hellohistory/EbookDataGeter
+
+![image](https://github.com/user-attachments/assets/de54f42a-d2a2-4e15-8b3e-3209adc0d46f)
+
+
+**2. managebooks 是一款优雅的个人实体书图书管理工具，让你的藏书井然有序。告别重复购书，轻松管理每一本珍藏。**
+
+✨核心特色
+
+多样化展示：封面墙、列表、表格等多种视图模式，随心切换
+智能录入：支持ISBN扫码录入，自动获取豆瓣图书信息
+数据本地化：所有数据存储在本地，安全可靠无忧
+丰富的分类管理：支持中图分类、自定义存放位置标记
+便捷的统计分析：
+
+购书折扣分析
+年度购书统计
+藏书分类占比
+购书趋势追踪
+
+https://www.douban.com/group/topic/296998935/?_i=0261689D4vGJ3w
+
+![image](https://github.com/user-attachments/assets/8d21037e-f914-4637-a054-daa31f32d534)
+
 
 ## 📊Star History
 

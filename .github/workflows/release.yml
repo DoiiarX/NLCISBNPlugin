@@ -27,7 +27,7 @@ jobs:
     # 创建ZIP压缩包
     - name: Create ZIP Archive
       run: |
-        cd src && zip ../NLCISBNPlugin.zip *.py ../README.md ../LICENSE data.json
+        zip -j NLCISBNPlugin.zip src/*.py README.md LICENSE
 
     # 创建发布说明
     - name: Generate Release Notes

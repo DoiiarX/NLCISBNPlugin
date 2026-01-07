@@ -34,17 +34,20 @@ HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
 }
 
-MAX_WORKERS = 2
-MAX_TITLE_LIST_NUM = 6
-SPIDER_BASE_SLEEP_TIME = 200
-IS_STRIP_TITLE = True
-IS_STRIP_AUTHOR = True
-IS_NCLHASH = True
-IS_PURSETAG = False
-IS_FUZZY_SEARCH_WITH_AUTHOR = True
-ADD_CLC_TO_TAGS = True
-CONVERT_CLC_TO_TAG = True
-CLC_PARSE_LEVEL = 2
+# 配置字典：存储所有可配置项的默认值
+CONFIG = {
+    'max_workers': 2,
+    'max_title_list_num': 6,
+    'spider_base_sleep_time': 200,
+    'is_strip_title': True,
+    'is_strip_author': True,
+    'is_nlchash': True,
+    'is_pursetag': False,
+    'is_fuzzy_search_with_author': True,
+    'add_clc_to_tags': True,
+    'convert_clc_to_tag': True,
+    'clc_parse_level': 2,
+}
 
 def spider_sleep():
     """
@@ -53,7 +56,7 @@ def spider_sleep():
     函数通过模拟掷8个120面的骰子并求和，加上一个随机数和基础睡眠时间，来确定睡眠时间，并使当前线程进入睡眠状态。
     """
     sleep_time = sum(randint(1, 120) for _ in range(8))  # 掷3个8到120面的骰子并求和
-    sleep_time = sleep_time + randint(30, 600) + SPIDER_BASE_SLEEP_TIME
+    sleep_time = sleep_time + randint(30, 600) + CONFIG['spider_base_sleep_time']
     time.sleep(sleep_time / 1000)
 
 
@@ -93,43 +96,53 @@ def get_dynamic_url(log):
     else:
         raise ValueError("无法找到动态URL")
 
-def title2metadata(title, log, result_queue, clean_downloaded_metadata, max_workers=MAX_WORKERS, max_title_list_num=MAX_TITLE_LIST_NUM ):
+def title2metadata(title, log, result_queue, clean_downloaded_metadata, max_workers=None, max_title_list_num=None):
+    if max_workers is None:
+        max_workers = CONFIG['max_workers']
+    if max_title_list_num is None:
+        max_title_list_num = CONFIG['max_title_list_num']
+
     if not isinstance(title, str):
         raise TypeError("title必须是字符串")
-    
+
     title = urllib.parse.quote(f"{title}")
     dynamic_url = get_dynamic_url(log)
     if not dynamic_url:
         return None
 
     search_url = SEARCH_URL_TEMPLATE_TITLE.format(title=title)
-    
+
     response = urllib.request.urlopen(urllib.request.Request(search_url, headers=HEADERS), timeout=10)
 
     response_text = response.read().decode('utf-8')
 
     titlelist = parse_search_list(response_text, log)
-    
+
     spider_sleep()
 
-    
-    if len(titlelist)>MAX_TITLE_LIST_NUM:
-        titlelist = titlelist[:MAX_TITLE_LIST_NUM]
+
+    if len(titlelist)>max_title_list_num:
+        titlelist = titlelist[:max_title_list_num]
     # 使用线程池处理并发请求
     metadatas = []
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        future_to_url = {executor.submit(url2metadata, item[1], log, result_queue, clean_downloaded_metadata, max_workers= MAX_WORKERS, max_title_list_num= MAX_TITLE_LIST_NUM): item for item in titlelist}
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_url = {executor.submit(url2metadata, item[1], log, result_queue, clean_downloaded_metadata, max_workers=max_workers, max_title_list_num=max_title_list_num): item for item in titlelist}
         for future in as_completed(future_to_url):
             data = future.result()
             if data:
                 metadatas.append(data)
     return metadatas
 
-def url2metadata(url, log, result_queue, clean_downloaded_metadata, max_workers= MAX_WORKERS, max_title_list_num= MAX_TITLE_LIST_NUM ):
+def url2metadata(url, log, result_queue, clean_downloaded_metadata, max_workers=None, max_title_list_num=None):
+    if max_workers is None:
+        max_workers = CONFIG['max_workers']
+    if max_title_list_num is None:
+        max_title_list_num = CONFIG['max_title_list_num']
+
     if not isinstance(url, str):
         raise TypeError("url必须是字符串")
     search_url = url
-    
+
     spider_sleep()
 
     try:
@@ -333,7 +346,7 @@ def get_parse_metadata(html, isbn, log):
             
     # 优化标题格式
     title = data.get("题名与责任", f"{isbn}")
-    if IS_STRIP_TITLE:
+    if CONFIG['is_strip_title']:
         pattern = r"([\u4e00-\u9fa5a-zA-Z0-9]+(?:[\u4e00-\u9fa5a-zA-Z0-9\s]+)?)(?=\s\[[\u4e00-\u9fa5]{2}\])" #
         try:
             match = re.search(pattern, title)
@@ -342,8 +355,8 @@ def get_parse_metadata(html, isbn, log):
         except re.error as e:
             log.error(f"正则表达式匹配错误: {e}, title: {title}")
 
-    authors = data.get("著者", "").split(' & ')
-    if IS_STRIP_AUTHOR:
+    authors = data.get("著者", "").split('\n')
+    if CONFIG['is_strip_author']:
         author_pattern = re.compile(r'^(.*?)\s+(?:著|编)')
         try:
             stripped_authors = []
@@ -376,16 +389,16 @@ def get_parse_metadata(html, isbn, log):
     publisher = publisher_match.group(1) if publisher_match else ""
     
     tags = data.get("主题", "").replace('--', '&')
-    if not IS_PURSETAG:
+    if not CONFIG['is_pursetag']:
         tags += f' & {publisher}'
         if year:
             tags += f' & {year}'
         # 处理中图分类号相关选项
         clc_code = data.get("中图分类号", "")
-        if ADD_CLC_TO_TAGS:
-            if CONVERT_CLC_TO_TAG:
+        if CONFIG['add_clc_to_tags']:
+            if CONFIG['convert_clc_to_tag']:
                 # 使用 Parser 解析中图分类号
-                parse_level = CLC_PARSE_LEVEL
+                parse_level = CONFIG['clc_parse_level']
                 parsed_clc = Parser.parse(clc_code)
                 if parsed_clc:
                         clc_codes = list(parsed_clc.values())[0]
@@ -425,7 +438,7 @@ def to_metadata(book, add_translator_to_author, log):
                    ) if add_translator_to_author and book.get('translators', None) else book['authors']
         mi = MetaInformation(book['title'], authors)
 
-        if IS_NCLHASH:
+        if CONFIG['is_nlchash']:
             mi.identifiers = {PROVIDER_ID: book.get('isbn', ''),
                             'nlchash': f"{hash_utf8_string(book['title']+book.get('pubdate', None))}"
                             }
@@ -439,7 +452,9 @@ def to_metadata(book, add_translator_to_author, log):
         pubdate = book.get('pubdate', None)
         if pubdate:
             try:
-                if re.compile('^\\d{4}-\\d+$').match(pubdate):
+                if re.compile('^\\d{4}$').match(pubdate):
+                    mi.pubdate = datetime.strptime(pubdate, '%Y')
+                elif re.compile('^\\d{4}-\\d+$').match(pubdate):
                     mi.pubdate = datetime.strptime(pubdate, '%Y-%m')
                 elif re.compile('^\\d{4}-\\d+-\\d+$').match(pubdate):
                     mi.pubdate = datetime.strptime(pubdate, '%Y-%m-%d')
@@ -470,57 +485,57 @@ class NLCISBNPlugin(Source):
         # name, type, default, label, default, choices
         # type 'number', 'string', 'bool', 'choices'
         Option(
-            'max_workers', 'number', MAX_WORKERS,
+            'max_workers', 'number', CONFIG['max_workers'],
             _('最大线程数'),
             _('爬虫最大线程数。如果过大可能导致用户IP被封锁。')
         ),
         Option(
-            'max_title_list_num', 'number', MAX_TITLE_LIST_NUM,
+            'max_title_list_num', 'number', CONFIG['max_title_list_num'],
             _('最大返回量'),
             _('通过标题搜索时，最多返回多少数据。请求量过多可能因为请求过于频繁被封锁IP。')
         ),
         Option(
-            'spider_base_sleep_time', 'number', SPIDER_BASE_SLEEP_TIME,
+            'spider_base_sleep_time', 'number', CONFIG['spider_base_sleep_time'],
             _('爬虫基础间隔时间'),
             _('爬虫两次爬取的间隔时间（单位：ms毫秒）。爬虫间隔时间 = 爬虫基础间隔时间 + 30 ~ 600 ms 的随机间隔时间')
         ),
         Option(
-            'is_strip_title', 'bool', IS_STRIP_TITLE,
+            'is_strip_title', 'bool', CONFIG['is_strip_title'],
             _('是否优化标题（实验功能）'),
-            _('是否优化标题。如果该项为“是”，则去除标题中多余的部分。默认为“是”。')
+            _('是否优化标题。如果该项为"是"，则去除标题中多余的部分。默认为"是"。')
         ),
         Option(
-            'is_strip_author', 'bool', IS_STRIP_AUTHOR,
+            'is_strip_author', 'bool', CONFIG['is_strip_author'],
             _('是否优化作者字段（实验功能）'),
-            _('是否优化作者字段。如果该项为“是”，则去除作者字段中多余的部分。默认为“是”。该项可能导致错误，例如名字末尾本身带有“著/编”。')
+            _('是否优化作者字段。如果该项为"是"，则去除作者字段中多余的部分。默认为"是"。该项可能导致错误，例如名字末尾本身带有"著/编"。')
         ),
         Option(
-            'is_nlchash', 'bool', IS_NCLHASH,
+            'is_nlchash', 'bool', CONFIG['is_nlchash'],
             _('是否使用nlchash字段（实验功能）'),
-            _('是否使用nlchash字段。如果该项为“否”，则去除nlchash字段。默认为“是”。该项可能有利于改善isbn相同，而标题不同的情况。')
+            _('是否使用nlchash字段。如果该项为"否"，则去除nlchash字段。默认为"是"。该项可能有利于改善isbn相同，而标题不同的情况。')
         ),
         Option(
-            'is_pursetag', 'bool', IS_PURSETAG,
+            'is_pursetag', 'bool', CONFIG['is_pursetag'],
             _('纯净的标签'),
-            _('是否添加“日期”和“出版社”到标签。如果该项为“否”，则不添加日期和出版社信息到标签。默认为“否”。')
+            _('是否添加"日期"和"出版社"到标签。如果该项为"否"，则不添加日期和出版社信息到标签。默认为"否"。')
         ),
         Option(
-            'is_fuzzy_search_with_author', 'bool', IS_FUZZY_SEARCH_WITH_AUTHOR,
+            'is_fuzzy_search_with_author', 'bool', CONFIG['is_fuzzy_search_with_author'],
             _('是否使用作者信息进行模糊搜索（实验功能）'),
-            _('是否将作者信息添加到标题中进行模糊搜索。如果该项为“是”，则将作者信息添加到标题中进行模糊搜索。默认为“是”。')
+            _('是否将作者信息添加到标题中进行模糊搜索。如果该项为"是"，则将作者信息添加到标题中进行模糊搜索。默认为"是"。')
         ),
         Option(
-            'add_clc_to_tags', 'bool', ADD_CLC_TO_TAGS,
+            'add_clc_to_tags', 'bool', CONFIG['add_clc_to_tags'],
             _('是否添加中图分类号到标签'),
-            _('是否将中图分类号添加到书籍标签中。默认为“是”。') 
+            _('是否将中图分类号添加到书籍标签中。默认为"是"。')
         ),
         Option(
-            'convert_clc_to_tag', 'bool', CONVERT_CLC_TO_TAG,
-            _('中图分类号是否转化为具体分类'), 
-            _('是否将中图分类号转换为具体的分类信息。默认为“是”。')
+            'convert_clc_to_tag', 'bool', CONFIG['convert_clc_to_tag'],
+            _('中图分类号是否转化为具体分类'),
+            _('是否将中图分类号转换为具体的分类信息。默认为"是"。')
         ),
         Option(
-            'clc_parse_level', 'number', CLC_PARSE_LEVEL,
+            'clc_parse_level', 'number', CONFIG['clc_parse_level'],
             _('中图分类号解析层级'),
             _('解析中图分类号的层级深度，取值范围1-3。1表示仅解析一级分类，3表示解析完整分类。默认为2。')
         )
@@ -528,6 +543,11 @@ class NLCISBNPlugin(Source):
     
     def __init__(self, *args, **kwargs):
         Source.__init__(self, *args, **kwargs)
+        # 从用户设置更新 CONFIG
+        global CONFIG
+        for key in CONFIG:
+            if key in self.prefs:
+                CONFIG[key] = self.prefs[key]
 
     def get_book_url(self, identifiers):
         return None
@@ -549,7 +569,7 @@ class NLCISBNPlugin(Source):
             metadata = None
             if title:
                 log.info(f"正在根据书名获取metadata...")
-                if IS_FUZZY_SEARCH_WITH_AUTHOR and authors and isinstance(authors, list):
+                if CONFIG['is_fuzzy_search_with_author'] and authors and isinstance(authors, list):
                     title += authors[0]
 
                 metadatas = title2metadata(title, log, result_queue, self.clean_downloaded_metadata,
